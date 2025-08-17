@@ -1,10 +1,8 @@
-from flask import Flask, jsonify
+import os
+from server import create_app
 
-app = Flask(__name__)
 
-@app.route('/api/test')
-def test():
-    return jsonify({"message": "Hello"})
+app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=int(os.getenv("PORT", 5000)))

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { register } from "../api/api.js";
+import toast from "react-hot-toast";
+import Toast from "../toast.jsx"; // 👈 reusable toast component
 
 function Register() {
   const [name, setName] = useState("");
@@ -16,8 +18,6 @@ function Register() {
   const from = sp.get("from");
   const to = sp.get("to");
   const totalDays = sp.get("totalDays");
-
-  // car id
   const carId = sp.get("carId");
 
   const finalRedirect =
@@ -29,10 +29,15 @@ function Register() {
     mutationFn: register,
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ["register"] });
-      navigate(finalRedirect, { replace: true });
+      console.log("✅ Success Data:", data.message);
+      toast.success(data.message || "Registration successful!");
+      setTimeout(() => {
+        navigate(finalRedirect, { replace: true });
+      }, 1500);
     },
     onError: err => {
-      console.error("Registration failed:", err);
+      console.log(err);
+      toast.error(err.message || "Registration failed. Try again.");
     },
   });
 
@@ -40,6 +45,8 @@ function Register() {
     e.preventDefault();
     if (name && email && password) {
       registerMutation.mutate({ name, email, password });
+    } else {
+      toast.error("Please fill in all fields.");
     }
   };
 
@@ -78,10 +85,13 @@ function Register() {
           </button>
 
           <Link to={"/login"}>
-            Already registered? <span>Login</span>
+            Already registered? <span className='text-green-600'>Login</span>
           </Link>
         </form>
       </div>
+
+      {/* Global Toast Renderer */}
+      <Toast />
     </div>
   );
 }

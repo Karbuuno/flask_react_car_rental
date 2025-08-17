@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { login } from "../api/api.js";
 import { UseContext } from "../context/AuthContext.jsx";
+import toast from "react-hot-toast";
 
 function LoginForm() {
   const { setUser } = UseContext();
@@ -33,10 +34,12 @@ function LoginForm() {
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ["login"] });
       setUser(data);
+      toast.success(data.message || "Registration successful!");
       navigate(finalRedirect, { replace: true });
     },
-    onError: () => {
-      setErrorMassage("Email or password is not correct");
+    onError: err => {
+      console.log(err);
+      toast.error(err.message || "Registration failed. Try again.");
     },
   });
 

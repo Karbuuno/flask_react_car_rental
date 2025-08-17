@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const login = async inputs => {
   try {
-    const { data } = await axios.post("/api/users/auth/", inputs, {
+    const { data } = await axios.post("/api/users/auth", inputs, {
       headers: {
         "content-type": "application/json",
       },
@@ -18,22 +18,24 @@ export const register = async inputs => {
   try {
     const res = await axios.post("/api/users/", inputs, {
       headers: {
-        "content-type": "application/json",
-        withCredentials: true,
+        "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
 
-    console.log(res);
+    return res.data;
   } catch (error) {
-    console.log(error);
+    throw error.response?.data || error;
   }
 };
+
 export const logout = async inputs => {
   try {
     const res = await axios.post("/api/users/logout/");
 
     // const token = res?.data?.token'
-    console.log(res);
+    console.log(res.data);
+    return res.data;
   } catch (error) {
     console.log(error.message);
   }

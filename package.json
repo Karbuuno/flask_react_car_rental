@@ -5,7 +5,7 @@
   "description": "Car rental application built with the MERN stack",
   "main": "server.js",
   "scripts": {
-    "server": "venv\\Scripts\\python -m flask --app server/server.py --debug run",
+    "server": "venv\\Scripts\\python -m flask --app server --debug run",
     "client": "npm run dev --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node server/utils/seeder",
