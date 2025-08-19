@@ -31,13 +31,13 @@ export const register = async inputs => {
 
 export const logout = async inputs => {
   try {
-    const res = await axios.post("/api/users/logout/");
+    const res = await axios.post("/api/users/logout");
 
     // const token = res?.data?.token'
     console.log(res.data);
     return res.data;
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 

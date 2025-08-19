@@ -38,7 +38,7 @@ function LoginForm() {
       navigate(finalRedirect, { replace: true });
     },
     onError: err => {
-      console.log(err);
+      console.log(err.message);
       toast.error(err.message || "Registration failed. Try again.");
     },
   });

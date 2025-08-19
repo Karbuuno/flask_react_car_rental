@@ -23,7 +23,7 @@ function DropDownMenu() {
     mutationFn: logout,
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ["logout"] });
-      setUser(data);
+      setUser(null);
     },
     onError: err => {
       console.error(err);
