@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
-from server import mongo 
-from server.utils.jwt import generate_token, decode_token
+from backend import mongo 
+from backend.utils.jwt import generate_token, decode_token
 
 from datetime import datetime
 
@@ -21,8 +21,10 @@ users = mongo.db.users
 def auth_user():
     try:
         data = request.get_json()
+         
         email = data.get("email")
         password = data.get("password")
+
 
         user = users.find_one({"email": email})
         if user and check_password_hash(user["password"], password):

@@ -29,7 +29,7 @@ def create_app():
         print(f"Error details: {e}")
 
     # Register blueprints
-    from server.routes.auth_routes import auth_bp
+    from backend.routes.auth_routes import auth_bp
     app.register_blueprint(auth_bp, url_prefix="/api/users")
     
 

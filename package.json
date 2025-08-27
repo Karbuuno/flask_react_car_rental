@@ -5,11 +5,10 @@
   "description": "Car rental application built with the MERN stack",
   "main": "server.js",
   "scripts": {
-    "server": "venv\\Scripts\\python -m flask --app server --debug run",
+    "backend": "venv\\Scripts\\python -m flask --app backend/server --debug run",
     "client": "npm run dev --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "data:import": "node server/utils/seeder",
-    "data:destroy": "node server/utils/seeder -d"
+    "dev": "concurrently \"npm run backend\" \"npm run client\"",
+    "data:import": "venv\\Scripts\\python -m backend.utils.seeder"
   },
   "license": "MIT",
   "dependencies": {
