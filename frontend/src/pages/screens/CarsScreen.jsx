@@ -23,7 +23,7 @@ function HomeScreen() {
           <h3>Data not found</h3>
         ) : (
           <>
-            {data.cars.map(car => (
+            {data.map(car => (
               <div
                 className='flex flex-col flex-grow gap-2 shadow-2xl bg-white rounded-md ms:w-full  md:w-full lg:w-[45%]'
                 key={car?._id}

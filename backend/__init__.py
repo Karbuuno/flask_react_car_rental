@@ -30,7 +30,9 @@ def create_app():
 
     # Register blueprints
     from backend.routes.auth_routes import auth_bp
+    from backend.routes.cars_routes import cars_bp
     app.register_blueprint(auth_bp, url_prefix="/api/users")
+    app.register_blueprint(cars_bp, url_prefix="/api/cars")
     
 
     return app
