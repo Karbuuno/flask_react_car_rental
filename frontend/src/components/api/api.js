@@ -47,8 +47,9 @@ export const allCarsData = async () => {
   return data;
 };
 //single car
-export const carDetails = async id => {
-  const { data } = await axios.get(`/api/cars/${id}`);
+export const carDetails = async car_id => {
+  const { data } = await axios.get(`/api/cars/${car_id}`);
+
   return data;
 };
 // register a car

@@ -29,10 +29,10 @@ function Location() {
     queryKey: ["search", location],
     queryFn: () => SearchCarsData(location),
   });
-
+  console.log(data);
   if (isLoading) return <h3>...loading</h3>;
   if (error) return <h3>Data not found</h3>;
-  if (!data || !data.searchedCar || data.searchedCar.length === 0) {
+  if (!data || data?.car?.length === 0) {
     return (
       <div className='flex items-center justify-center h-[50vh]'>
         <h3 className='text-2xl font-semibold text-gray-500'>
@@ -44,7 +44,7 @@ function Location() {
 
   return (
     <div className='flex justify-between flex-wrap gap-x-4 gap-y-12 mt-20 px-3 md:px-5 lg:px-8 xl:px-16'>
-      {data.searchedCar.map(car => (
+      {data?.car?.map(car => (
         <div
           className='flex flex-col flex-grow gap-2 shadow-2xl bg-white rounded-md ms:w-full md:w-full lg:w-[45%]'
           key={car._id}
