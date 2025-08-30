@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from bson import ObjectId
 from backend import mongo 
-from datetime import datetime
+
 
 cars_bp = Blueprint("cars", __name__)
 

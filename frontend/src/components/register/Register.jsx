@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { register } from "../api/api.js";
 import toast from "react-hot-toast";
-import Toast from "../toast.jsx"; // 👈 reusable toast component
+// import Toast from "../toast.jsx"; // 👈 reusable toast component
 
 function Register() {
   const [name, setName] = useState("");

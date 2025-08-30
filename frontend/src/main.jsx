@@ -17,7 +17,7 @@ import Cars from "./pages/screens/CarsScreen.jsx";
 import CarScreen from "./pages/screens/CarDetailsScreen.jsx";
 import Search from "./pages/screens/Search.jsx";
 import Location from "./pages/screens/Location.jsx";
-import Checkout_session from "./pages/screens/Checkout_session.jsx";
+import SuccessPage from "./pages/screens/SuccessPage.jsx";
 import CarList from "./pages/screens/admin/CarList.jsx";
 import AdminRoute from "./pages/screens/admin/AdminRoute.jsx";
 import UserProfile from "./pages/screens/UserProfile.jsx";
@@ -34,7 +34,7 @@ const router = createBrowserRouter(
       <Route path='/cars' element={<Cars />} />
       <Route path='/car/:id' element={<CarScreen />} />
       <Route path='/cars/search/:location' element={<Location />} />
-      <Route path='/checkout_session' element={<Checkout_session />} />
+      <Route path='/successPage' element={<SuccessPage />} />
       {/* Authorized User */}
       <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<UserProfile />} />

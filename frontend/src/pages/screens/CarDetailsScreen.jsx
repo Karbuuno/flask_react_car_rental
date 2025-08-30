@@ -25,7 +25,7 @@ function CarDetailsScreen() {
     queryFn: () => carDetails(id),
   });
   const car = data;
-  console.log(car);
+
   const stripeMutation = useMutation({
     mutationFn: checkout,
     onSuccess: data => {
@@ -42,14 +42,16 @@ function CarDetailsScreen() {
       navigate("/login");
       return;
     }
+    console.log(user.user_id);
     stripeMutation.mutate({
-      totalPrice: Math.floor(data?.car?.price * totalDays),
-      userId: user._id,
-      carId: data?.car?._id,
-      image: data?.car?.image,
-      make: data?.car?.name,
-      regNumber: data?.car?.regNumber,
-      isAvailable: data?.car?.isAvailable,
+      totalPrice:
+        car?.price && totalDays > 0 ? Math.floor(car.price * totalDays) : 0,
+      userId: user?.user_id,
+      carId: car?._id,
+      image: car?.image,
+      make: car?.name,
+      regNumber: car?.regNumber,
+      isAvailable: car?.isAvailable,
       startDate: from,
       endDate: to,
       totalDays,

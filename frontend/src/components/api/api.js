@@ -72,12 +72,15 @@ export const SearchCarsData = async location => {
 export const checkout = async stripeData => {
   try {
     const { data } = await axios.post(
-      "/api/stripe/create-checkout",
+      "/api/stripe/create_checkout_session",
       stripeData,
       {
         headers: {
           "content-type": "application/json",
         },
+      },
+      {
+        withCredentials: true, // if using cookies / JWT
       }
     );
     if (data) {
