@@ -34,7 +34,7 @@ const router = createBrowserRouter(
       <Route path='/cars' element={<Cars />} />
       <Route path='/car/:id' element={<CarScreen />} />
       <Route path='/cars/search/:location' element={<Location />} />
-      <Route path='/successPage' element={<SuccessPage />} />
+      <Route path='/success' element={<SuccessPage />} />
       {/* Authorized User */}
       <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<UserProfile />} />

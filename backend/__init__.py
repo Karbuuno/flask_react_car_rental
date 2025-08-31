@@ -32,9 +32,11 @@ def create_app():
     from backend.routes.auth_routes import auth_bp
     from backend.routes.cars_routes import cars_bp
     from backend.routes.stripe_routes import stripe_bp
+    from backend.routes.bookings_routes import bookings_bp
     app.register_blueprint(auth_bp, url_prefix="/api/users")
     app.register_blueprint(cars_bp, url_prefix="/api/cars")
     app.register_blueprint(stripe_bp, url_prefix="/api/stripe")
+    app.register_blueprint(bookings_bp, url_prefix="/api/bookings")
     
 
     return app
