@@ -9,132 +9,131 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MdDelete } from "react-icons/md";
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { allBookings, carAvailable, deleteBooking } from "@/components/api/api";
 import dayjs from "dayjs";
 import { dayDifference } from "@/components/api/daysDiff";
 
 function AllBookings() {
-  // fetch all bookings
   const { data, error, isLoading } = useQuery("bookings", allBookings);
-  console.log(data)
-  const QueryClient = useQueryClient();
-  //getting current data
+  // console.log(data)
+  const queryClient = useQueryClient();
+
   const today = dayjs();
   const currentDate = today.format("YYYY-MM-DD");
-  const isPassedEndDate = (endDate, currentDate) => {
-    return endDate > currentDate;
-  };
-  // car availability
+
   const carAvailableMutation = useMutation({
     mutationFn: carAvailable,
-    onSuccess: data => {
-      QueryClient.invalidateQueries({ queryKey: ["bookings"] });
-      console.log(data);
+    onSuccess: () => {
+      queryClient.invalidateQueries("bookings");
     },
   });
-  //delete booking
 
   const deleteBookingMutation = useMutation({
     mutationFn: deleteBooking,
-    onSuccess: data => {
-      console.log(data);
-      QueryClient.invalidateQueries({ queryKey: ["bookings"] });
+    onSuccess: () => {
+      queryClient.invalidateQueries("bookings");
     },
   });
 
-  //handle handleDelete
-  const handleDelete = async id => {
-    deleteBookingMutation.mutate(id);
-  };
-  // handle available
-  const handleAvailable = async id => {
-    carAvailableMutation.mutate(id);
-  };
+  const handleDelete = id => deleteBookingMutation.mutate(id);
+  const handleAvailable = id => carAvailableMutation.mutate(id);
 
   return (
-    <>
-      <div className='w-[1000px] mx-auto mt-12 '>
+    <div className="max-w-6xl mx-auto mt-16 px-6">
+      <h1 className="text-3xl font-bold mb-6">📊 Admin Bookings Dashboard</h1>
+
+      {/* Stats Overview */}
+      {data && (
+        <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="bg-blue-100 p-4 rounded-2xl shadow">
+            <h3 className="text-lg font-semibold">Total Bookings</h3>
+            <p className="text-2xl font-bold">{data.length}</p>
+          </div>
+          <div className="bg-green-100 p-4 rounded-2xl shadow">
+            <h3 className="text-lg font-semibold">Active Bookings</h3>
+            <p className="text-2xl font-bold">
+              {data?.filter(b => !b.isAvailable).length}
+            </p>
+          </div>
+          <div className="bg-gray-100 p-4 rounded-2xl shadow">
+            <h3 className="text-lg font-semibold">Available Cars</h3>
+            <p className="text-2xl font-bold">
+              {data.filter(b => b.isAvailable).length}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Bookings Table */}
+      <div className="overflow-x-auto bg-white shadow-lg rounded-2xl">
         {isLoading ? (
-          <h3>...loading</h3>
+          <p className="p-6 text-lg">Loading bookings...</p>
         ) : error ? (
-          <h3>{<h3>Data not found</h3>}</h3>
+          <p className="p-6 text-red-500"> Failed to fetch data</p>
         ) : (
           <Table>
-            <TableCaption>A list of your recent Booking.</TableCaption>
-            <TableHeader>
+            <TableCaption>Recent Bookings</TableCaption>
+            <TableHeader className="bg-gray-100">
               <TableRow>
                 <TableHead>Reg Number</TableHead>
                 <TableHead>Car Make</TableHead>
                 <TableHead>Start Date</TableHead>
                 <TableHead>End Date</TableHead>
                 <TableHead>Amount</TableHead>
-                <TableHead>Car Availability</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
-            {data?.map(booking => (
-              <TableBody key={booking._id}>
-                <TableRow>
-                  <TableCell className='font-medium'>
-                    {booking.regNumber}
-                  </TableCell>
-                  <TableCell className='font-medium'>{booking.make}</TableCell>
-                  <TableCell className='font-medium'>
-                    {booking.startDate}
-                  </TableCell>
-                  <TableCell className='font-medium'>
-                    {booking.endDate}
-                  </TableCell>
-                  <TableCell className='font-medium'>
-                    <span className='font-bold'>£</span>
+            <TableBody>
+              {data?.map(booking => (
+                <TableRow
+                  key={booking._id}
+                  className="hover:bg-gray-50 transition"
+                >
+                  <TableCell>{booking.regNumber}</TableCell>
+                  <TableCell>{booking.make}</TableCell>
+                  <TableCell>{booking.startDate}</TableCell>
+                  <TableCell>{booking.endDate}</TableCell>
+                  <TableCell>
+                    <span className="font-bold">£</span>
                     {booking.totalPrice}
                   </TableCell>
-                  <TableCell className='font-medium'>
-                    {booking.isAvailable === false ? (
+                  <TableCell>
+                    {booking.isAvailable ? (
+                      <span className="px-3 py-1 rounded-md bg-green-200 text-green-800 font-semibold">
+                        Available
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 rounded-md bg-yellow-200 text-yellow-800 font-semibold">
+                        {dayDifference(currentDate, booking.endDate)} Days Left
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {!booking.isAvailable ? (
                       <button
-                        onClick={() =>
-                          handleAvailable(booking?._id, {
-                            isAvailable: booking.isAvailable,
-                          })
-                        }
-                        className='p-2 w-[150px] rounded-md text-white text-center text-lg bg-gray-500 shadow-lg shadow-gray-500/50'
+                        onClick={() => handleAvailable(booking._id)}
+                        className="px-4 py-2 rounded-lg bg-blue-500 text-white shadow hover:bg-blue-600"
                       >
                         Mark Available
                       </button>
                     ) : (
-                      <div className=' p-2 w-[150px] rounded-md text-white text-center text-xl bg-green-500 shadow-lg shadow-green-500/50'>
-                        Available
-                      </div>
-                    )}
-                  </TableCell>
-
-                  <TableCell className='font-medium'>
-                    {booking.isAvailable === true ? (
-                      <div className=' flex place-content-center p-2 w-[100px] text-2xl rounded-md cursor-pointer  text-white place-items-center  bg-red-300 shadow-lg shadow-gray-100/50'>
-                        <MdDelete
-                          className=' item-center '
-                          onClick={() => handleDelete(booking?._id)}
-                        />
-                      </div>
-                    ) : (
-                      <div className='p-2 w-[150px] rounded-md text-white text-center text-xl bg-blue-500 shadow-lg shadow-blue-200/50'>
-                        {dayDifference(currentDate, booking.endDate)} Days Left
-                      </div>
+                      <button
+                        onClick={() => handleDelete(booking._id)}
+                        className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+                      >
+                        <MdDelete size={22} />
+                      </button>
                     )}
                   </TableCell>
                 </TableRow>
-              </TableBody>
-            ))}
+              ))}
+            </TableBody>
           </Table>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
