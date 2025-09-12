@@ -70,7 +70,7 @@ def webhook():
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-
+        print("checkout session",session)
         booking = {
             "userId": session["metadata"]["user_id"],
             "carId": session["metadata"]["carId"],
