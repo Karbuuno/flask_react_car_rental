@@ -22,6 +22,7 @@ import { dayDifference } from "@/components/api/daysDiff";
 function AllBookings() {
   // fetch all bookings
   const { data, error, isLoading } = useQuery("bookings", allBookings);
+  console.log(data)
   const QueryClient = useQueryClient();
   //getting current data
   const today = dayjs();
@@ -77,7 +78,7 @@ function AllBookings() {
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
-            {data?.bookings.map(booking => (
+            {data?.map(booking => (
               <TableBody key={booking._id}>
                 <TableRow>
                   <TableCell className='font-medium'>

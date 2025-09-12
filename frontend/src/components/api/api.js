@@ -118,7 +118,7 @@ export const userBookings = async () => {
   return data;
 };
 export const allBookings = async () => {
-  const { data } = await axios.get("/api/bookings/allBookings");
+  const { data } = await axios.get("/api/bookings/");
   return data;
 };
 export const carAvailable = async id => {
