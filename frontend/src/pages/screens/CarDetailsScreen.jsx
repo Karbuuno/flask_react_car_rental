@@ -42,7 +42,7 @@ function CarDetailsScreen() {
       navigate("/login");
       return;
     }
-    console.log(user.user_id);
+   
     stripeMutation.mutate({
       totalPrice:
         car?.price && totalDays > 0 ? Math.floor(car.price * totalDays) : 0,
@@ -56,6 +56,7 @@ function CarDetailsScreen() {
       endDate: to,
       totalDays,
     });
+     
   };
 
   return (

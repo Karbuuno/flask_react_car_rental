@@ -15,3 +15,19 @@ export const dayDifference = (from, to) => {
 
   return daysDiff;
 };
+
+
+
+export const bookingStatus = (endDate) => {
+  const today = dayjs().startOf("day");
+  const end = dayjs(endDate).startOf("day"); // works with "2025-09-14"
+
+  if (today.isAfter(end)) {
+    return `Booking Ended on ${end.format("DD/MM/YYYY")}`;
+  } else if (today.isSame(end)) {
+    return "Ends today";
+  } else {
+    const daysLeft = end.diff(today, "day");
+    return `${daysLeft} day${daysLeft > 1 ? "s" : ""} left`;
+  }
+};

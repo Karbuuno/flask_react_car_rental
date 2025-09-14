@@ -4,6 +4,7 @@ from bson import ObjectId
 from backend import mongo 
 import stripe
 
+
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET_KEY")
 CLIENT_URL = os.getenv("CLIENT_URL")
@@ -44,9 +45,9 @@ def create_checkout_session():
                 "regNumber": data["regNumber"],
                 "startDate": data["startDate"],
                 "endDate": data["endDate"],
-                "isAvailable": str(data["isAvailable"]),
-                "totalPrice": str(data["totalPrice"]),
-                "totalDays": str(data["totalDays"]),
+                "isAvailable": False,
+                "totalPrice":float(data["totalPrice"]),
+                "totalDays": int(data["totalDays"]),
             },
             success_url=f"{CLIENT_URL}/success",
             cancel_url=f"{CLIENT_URL}/cancel",
@@ -70,22 +71,30 @@ def webhook():
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        print("checkout session",session)
+
+        # convert types properly
         booking = {
             "userId": session["metadata"]["user_id"],
             "carId": session["metadata"]["carId"],
             "make": session["metadata"]["make"],
             "image": session["metadata"]["image"],
             "regNumber": session["metadata"]["regNumber"],
-            "startDate": session["metadata"]["startDate"],
+            "startDate": session["metadata"]["startDate"], 
             "endDate": session["metadata"]["endDate"],
-            "isAvailable": session["metadata"]["isAvailable"],
-            "totalPrice": session["metadata"]["totalPrice"],
-            "totalDays": session["metadata"]["totalDays"],
+    
+            "isAvailable": False,  
+            "totalPrice": float(session["metadata"]["totalPrice"]),  
+            "totalDays": int(session["metadata"]["totalDays"]),      
             "payment_status": session["payment_status"],
-            "created_at": session["created"],
+            "created_at": int(session["created"]),  
         }
 
         bookings.insert_one(booking)
+
+        # update car availability in cars collection
+        cars.update_one(
+            {"_id": ObjectId(session["metadata"]["carId"])},
+            {"$set": {"isAvailable": False}}
+        )
 
     return jsonify({"status": "success"}), 200
