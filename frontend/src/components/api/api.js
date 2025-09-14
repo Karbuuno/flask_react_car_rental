@@ -7,7 +7,7 @@ export const login = async inputs => {
         "content-type": "application/json",
       },
     });
-    console.log(data);
+  
     return data;
   } catch (error) {
     console.log(error);
@@ -34,7 +34,7 @@ export const logout = async inputs => {
     const res = await axios.post("/api/users/logout");
 
     // const token = res?.data?.token'
-    console.log(res.data);
+  
     return res.data;
   } catch (error) {
     console.log(error);
@@ -64,7 +64,6 @@ export const registerCar = async FormData => {
 //search car details
 export const SearchCarsData = async location => {
   const { data } = await axios.get(`/api/cars/search/${location}`);
-  console.log(data);
   return data;
 };
 
