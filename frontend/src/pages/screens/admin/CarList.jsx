@@ -8,8 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { allCarsData, deleteCar } from "@/components/api/api";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { allCarsData} from "@/components/api/api";
+import { useQuery} from "react-query";
 import CarTable from "./CarTable";
 import DialogForm from "@/components/DialogForm";
 

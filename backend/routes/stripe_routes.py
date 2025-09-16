@@ -81,7 +81,7 @@ def webhook():
             "regNumber": session["metadata"]["regNumber"],
             "startDate": session["metadata"]["startDate"], 
             "endDate": session["metadata"]["endDate"],
-    
+
             "isAvailable": False,  
             "totalPrice": float(session["metadata"]["totalPrice"]),  
             "totalDays": int(session["metadata"]["totalDays"]),      

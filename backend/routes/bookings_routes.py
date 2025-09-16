@@ -1,5 +1,6 @@
-from flask import Blueprint, jsonify
 from bson import ObjectId, errors
+from flask import Blueprint, jsonify
+
 from backend import mongo
 
 bookings_bp = Blueprint("bookings", __name__)
