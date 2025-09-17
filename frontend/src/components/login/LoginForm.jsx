@@ -31,19 +31,19 @@ function LoginForm() {
 
   const { mutate } = useMutation({
     mutationFn: login,
-    onSuccess: data => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["login"] });
       setUser(data);
-      toast.success(data.message || "Registration successful!");
+      // toast.success(data.message || "Registration successful!");
       navigate(finalRedirect, { replace: true });
     },
-    onError: err => {
+    onError: (err) => {
       console.log(err.message);
       toast.error(err.message || "Registration failed. Try again.");
     },
   });
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     if (email && password) {
       mutate({ email, password });
@@ -53,28 +53,28 @@ function LoginForm() {
   };
 
   return (
-    <div className='flex justify-center items-center h-screen'>
-      <div className='shadow-lg p-5 rounded-lg border-t-4 border-green-400'>
-        <h1 className='text-xl font-bold my-4'>Enter your details</h1>
+    <div className="flex justify-center items-center h-screen">
+      <div className="shadow-lg p-5 rounded-lg border-t-4 border-green-400">
+        <h1 className="text-xl font-bold my-4">Enter your details</h1>
         <div>{errorMassage}</div>
-        <form className='flex flex-col gap-3' onSubmit={submitHandler}>
+        <form className="flex flex-col gap-3" onSubmit={submitHandler}>
           <input
-            className='w-[400px] border-gray-200 py-2 px-6 bg-zinc-100/40 rounded-lg'
-            type='email'
-            placeholder='Enter email'
+            className="w-[400px] border-gray-200 py-2 px-6 bg-zinc-100/40 rounded-lg"
+            type="email"
+            placeholder="Enter email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
-            className='w-[400px] border-gray-200 py-2 px-6 bg-zinc-100/40 rounded-lg'
-            type='password'
-            placeholder='Enter password'
+            className="w-[400px] border-gray-200 py-2 px-6 bg-zinc-100/40 rounded-lg"
+            type="password"
+            placeholder="Enter password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <button
-            type='submit'
-            className='bg-green-600 text-white font-bold cursor-pointer px-6 py-2'
+            type="submit"
+            className="bg-green-600 text-white font-bold cursor-pointer px-6 py-2"
           >
             Login
           </button>

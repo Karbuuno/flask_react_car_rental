@@ -1,5 +1,9 @@
+import base64
+
+import cloudinary
+import cloudinary.uploader
 from bson import ObjectId
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, jsonify, request
 from pymongo import ReturnDocument
 
 from backend import mongo
@@ -60,9 +64,8 @@ def available_car(id):
         booking = bookings_cl.find_one_and_update(
             {"_id": ObjectId(id)},
             {"$set": {"isAvailable": is_available}},
-            return_document=ReturnDocument.AFTER,  # ✅ this returns updated doc
+            return_document=ReturnDocument.AFTER,
         )
-        print(booking)
 
         if not booking:
             return jsonify({"error": "Booking Not Found"}), 400
@@ -82,3 +85,52 @@ def available_car(id):
     except Exception as e:
         print("Error:", e)
         return jsonify({"error": "Car not found"}), 404
+
+
+# ✅ Update a car
+@cars_bp.route("/<id>", methods=["PUT"])
+def update_car(id):
+    try:
+        # Use request.form for text fields (multipart/form-data)
+        updated_fields = {
+            "name": request.form.get("name"),
+            "regNumber": request.form.get("regNumber"),
+            "seats": request.form.get("seats"),
+            "doors": request.form.get("doors"),
+            "carType": request.form.get("carType"),
+            "gear": request.form.get("gear"),
+            "description": request.form.get("description"),
+            "location": request.form.get("location"),
+            "fuel": request.form.get("fuel"),
+            "model": request.form.get("model"),
+            "price": request.form.get("price"),
+        }
+
+        # ✅ If a file was uploaded
+        if "file" in request.files:
+            file = request.files["file"]
+
+            # Upload directly to Cloudinary (no need for base64)
+            result = cloudinary.uploader.upload(
+                file,
+                resource_type="image",
+                transformation=[{"width": 500, "height": 500, "crop": "limit"}],
+            )
+            updated_fields["image"] = result.get("secure_url")
+
+        # ✅ Update car in MongoDB
+        car = cars_cl.find_one_and_update(
+            {"_id": ObjectId(id)},
+            {"$set": {k: v for k, v in updated_fields.items() if v is not None}},
+            return_document=ReturnDocument.AFTER,
+        )
+
+        if not car:
+            return jsonify({"error": "Car not found"}), 404
+
+        car["_id"] = str(car["_id"])
+        return jsonify(car), 200
+
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": "Failed to update car"}), 400
