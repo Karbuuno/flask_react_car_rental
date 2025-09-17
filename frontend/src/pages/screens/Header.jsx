@@ -14,30 +14,30 @@ function Header() {
   }, [location]);
 
   return (
-    <header className='fixed top-0 left-0 w-full bg-black text-white shadow-lg z-50'>
-      <div className='max-w-7xl mx-auto px-6 flex justify-between items-center h-16'>
+    <header className="fixed top-0 left-0 w-full bg-black text-white shadow-lg z-50">
+      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
         {/* Logo */}
-        <Link to='/' className='flex items-center gap-2'>
-          <h1 className='text-xl md:text-2xl font-bold tracking-wide'>
+        <Link to="/" className="flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-bold tracking-wide">
             CAR RENTAL
           </h1>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className='hidden md:flex gap-6 text-gray-300 font-medium'>
-          <Link to='/' className='hover:text-yellow-400 transition'>
-            Home
+        <nav className="hidden md:flex gap-6 text-gray-300 font-medium">
+          <Link to="/" className="hover:text-yellow-400 transition">
+            Dashboard
           </Link>
-          <Link to='/cars' className='hover:text-yellow-400 transition'>
+          <Link to="/cars" className="hover:text-yellow-400 transition">
             Cars
           </Link>
-          <Link to='/about' className='hover:text-yellow-400 transition'>
+          <Link to="/about" className="hover:text-yellow-400 transition">
             About
           </Link>
           {user ? (
             <DropDownMenu />
           ) : (
-            <Link to='/login' className='hover:text-yellow-400 transition'>
+            <Link to="/login" className="hover:text-yellow-400 transition">
               Login
             </Link>
           )}
@@ -45,7 +45,7 @@ function Header() {
 
         {/* Mobile Toggle */}
         <div
-          className='md:hidden text-gray-300 cursor-pointer'
+          className="md:hidden text-gray-300 cursor-pointer"
           onClick={() => setNavOpen(!navOpen)}
         >
           {navOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
@@ -55,7 +55,7 @@ function Header() {
       {/* Overlay */}
       {navOpen && (
         <div
-          className='fixed inset-0 bg-black/50 backdrop-blur-sm z-40'
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
           onClick={() => setNavOpen(false)}
         />
       )}
@@ -66,24 +66,24 @@ function Header() {
           navOpen ? "translate-x-0" : "translate-x-full"
         } md:hidden`}
       >
-        <nav className='flex flex-col items-start p-6 gap-6 text-gray-300 text-lg'>
+        <nav className="flex flex-col items-start p-6 gap-6 text-gray-300 text-lg">
           <Link
-            to='/'
-            className='hover:text-yellow-400'
+            to="/"
+            className="hover:text-yellow-400"
             onClick={() => setNavOpen(false)}
           >
             Home
           </Link>
           <Link
-            to='/cars'
-            className='hover:text-yellow-400'
+            to="/cars"
+            className="hover:text-yellow-400"
             onClick={() => setNavOpen(false)}
           >
             Cars
           </Link>
           <Link
-            to='/about'
-            className='hover:text-yellow-400'
+            to="/about"
+            className="hover:text-yellow-400"
             onClick={() => setNavOpen(false)}
           >
             About
@@ -92,8 +92,8 @@ function Header() {
             <DropDownMenu />
           ) : (
             <Link
-              to='/login'
-              className='hover:text-yellow-400'
+              to="/login"
+              className="hover:text-yellow-400"
               onClick={() => setNavOpen(false)}
             >
               Login

@@ -15,7 +15,7 @@ def get_all_bookings():
     try:
         bookings = list(bookings_cl.find())
         for booking in bookings:
-            booking["_id"] = str(booking["_id"])  # convert ObjectId to string
+            booking["_id"] = str(booking["_id"])
         return jsonify(bookings)
     except Exception as err:
         return jsonify({"error": str(err)}), 400
@@ -29,7 +29,7 @@ def get_single_booking(id):
         if not booking:
             return jsonify({"error": "Booking not found"}), 404
 
-        booking["_id"] = str(booking["_id"])  # convert ObjectId to string
+        booking["_id"] = str(booking["_id"])
         return jsonify(booking)
 
     except errors.InvalidId:
