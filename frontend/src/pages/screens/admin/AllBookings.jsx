@@ -53,7 +53,7 @@ function AllBookings() {
 
       {/* Stats Overview */}
       {data && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
           <div className="bg-blue-100 p-4 rounded-2xl shadow text-center">
             <h3 className="text-lg font-semibold">Total Bookings</h3>
             <p className="text-2xl font-bold">{data.length}</p>
@@ -69,6 +69,14 @@ function AllBookings() {
               <h3 className="text-lg font-semibold">Available Cars</h3>
               <p className="text-2xl font-bold">
                 {carData?.filter((car) => car.isAvailable).length}
+              </p>
+            </div>
+          )}
+          {carData && (
+            <div className="bg-gray-100 p-4 rounded-2xl shadow text-center">
+              <h3 className="text-lg font-semibold">Available Cars</h3>
+              <p className="text-2xl font-bold">
+                {carData?.filter((car) => car).length}
               </p>
             </div>
           )}
@@ -115,12 +123,12 @@ function AllBookings() {
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`md:block px-3 py-1 rounded-md font-semibold ${
+                          className={`md:block px-3 py-1 w-36 rounded-md font-semibold ${
                             bookingStatus(booking.endDate).includes("Ended")
-                              ? "bg-red-200 text-red-800"
+                              ? "2xl:block bg-red-200 text-red-800"
                               : bookingStatus(booking.endDate).includes("today")
-                              ? "bg-yellow-200 text-yellow-800"
-                              : "bg-yellow-200 text-yellow-800"
+                              ? " text-center bg-yellow-200 text-yellow-800 py-2 w-36"
+                              : "text-center bg-yellow-200 text-yellow-800 py-2 w-36"
                           }`}
                         >
                           {bookingStatus(booking.endDate)}
@@ -130,16 +138,16 @@ function AllBookings() {
                         {!booking.isAvailable ? (
                           <button
                             onClick={() => handleAvailable(booking._id)}
-                            className="px-4 py-2  rounded-lg bg-blue-500 text-white shadow hover:bg-blue-600"
+                            className="px-1 w-28 py-2  rounded-lg bg-blue-500 text-white shadow hover:bg-blue-600"
                           >
                             Mark Available
                           </button>
                         ) : (
                           <button
                             onClick={() => handleDelete(booking._id)}
-                            className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+                            className="px-1 w-28 py-2  rounded-lg bg-red-400 text-white shadow hover:bg-red-600"
                           >
-                            <MdDelete size={22} />
+                            Delete
                           </button>
                         )}
                       </TableCell>
