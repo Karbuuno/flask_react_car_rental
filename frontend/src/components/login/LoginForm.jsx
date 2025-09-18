@@ -6,7 +6,7 @@ import { UseContext } from "../context/AuthContext.jsx";
 import toast from "react-hot-toast";
 
 function LoginForm() {
-  const { setUser } = UseContext();
+  const { user, setUser } = UseContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMassage, setErrorMassage] = useState("");
@@ -34,8 +34,13 @@ function LoginForm() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["login"] });
       setUser(data);
+
       // toast.success(data.message || "Registration successful!");
-      navigate(finalRedirect, { replace: true });
+      if (data?.isAdmin) {
+        navigate("/cars/admin/dashboard");
+      } else {
+        navigate(finalRedirect, { replace: true });
+      }
     },
     onError: (err) => {
       console.log(err.message);
