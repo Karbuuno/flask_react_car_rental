@@ -25,8 +25,12 @@ function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-6 text-gray-300 font-medium">
-          <Link to="/" className="hover:text-yellow-400 transition">
-            Dashboard
+          <Link
+            to={user?.isAdmin ? "/cars/admin/dashboard" : "/"}
+            className="hover:text-yellow-400"
+            onClick={() => setNavOpen(false)}
+          >
+            {user?.isAdmin ? "Dashboard" : "Home"}
           </Link>
           <Link to="/cars" className="hover:text-yellow-400 transition">
             Cars
@@ -68,11 +72,11 @@ function Header() {
       >
         <nav className="flex flex-col items-start p-6 gap-6 text-gray-300 text-lg">
           <Link
-            to="/"
+            to={user?.isAdmin ? "/cars/admin/dashboard" : "/"}
             className="hover:text-yellow-400"
             onClick={() => setNavOpen(false)}
           >
-            Home
+            {user?.isAdmin ? "Dashboard" : "Home"}
           </Link>
           <Link
             to="/cars"

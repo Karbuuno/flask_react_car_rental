@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import axios from "axios";
 
 export const login = async (inputs) => {
@@ -53,11 +54,11 @@ export const carDetails = async (car_id) => {
   return data;
 };
 // register a car
-export const registerCar = async (FormData) => {
-  const { data } = await axios.post("/api/cars/", FormData, {
+export const addCar = async (FormData) => {
+  const { data } = await axios.post("/api/cars/add_car", FormData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-
+  console.log(data);
   return data;
 };
 
@@ -92,12 +93,14 @@ export const checkout = async (stripeData) => {
 };
 
 //Update car
-export const updateCar = async (updatedCar) => {
-  const { data } = await axios.put(`/api/cars/${updatedCar._id}`, updatedCar, {
+export const updateCar = async (_id, formData) => {
+  const { data } = await axios.put(`/api/cars/update/${_id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  console.log(data);
   return data;
 };
+
 export const updateProfile = async (updatedUser) => {
   const { data } = await axios.put(`/api/users/profile`, updatedUser, {
     headers: { "Content-Type": "application/json" },
@@ -106,8 +109,16 @@ export const updateProfile = async (updatedUser) => {
 };
 
 // Delete car
-export const deleteCar = async (id) => {
-  const { data } = await axios.delete(`/api/cars/${id}`);
+export const deleteCar = async (car_id) => {
+  const { data } = await axios.delete(`/api/cars/delete/${car_id}`);
+  return data;
+};
+export const carAvailable = async (id) => {
+  const { data } = await axios.patch(`/api/cars/available/${id}`, {
+    headers: {
+      "content-type": "application/json",
+    },
+  });
   return data;
 };
 
@@ -118,14 +129,6 @@ export const userBookings = async () => {
 };
 export const allBookings = async () => {
   const { data } = await axios.get("/api/bookings/");
-  return data;
-};
-export const carAvailable = async (id) => {
-  const { data } = await axios.patch(`/api/cars/available/${id}`, {
-    headers: {
-      "content-type": "application/json",
-    },
-  });
   return data;
 };
 

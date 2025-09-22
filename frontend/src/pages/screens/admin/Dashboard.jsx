@@ -11,15 +11,17 @@ import {
 } from "@/components/ui/table";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
+  deleteCar,
   allBookings,
   allCarsData,
   carAvailable,
   deleteBooking,
 } from "@/components/api/api";
 import { bookingStatus } from "@/components/api/daysDiff";
+import CarFormDialog from "@/components/CarFormDialog"; // ✅ Reusable Add/Edit Car form
 
 function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("allBookings"); // default tab
+  const [activeTab, setActiveTab] = useState("allCars");
 
   const { data: carData } = useQuery("cars", allCarsData);
   const {
@@ -38,22 +40,31 @@ function AdminDashboard() {
     },
   });
 
+  const deleteCarMutation = useMutation({
+    mutationFn: deleteCar,
+    onSuccess: () => {
+      queryClient.invalidateQueries("cars");
+    },
+  });
+
   const deleteBookingMutation = useMutation({
     mutationFn: deleteBooking,
     onSuccess: () => {
       queryClient.invalidateQueries("bookings");
+      queryClient.invalidateQueries("cars");
     },
   });
 
-  const handleDelete = (id) => deleteBookingMutation.mutate(id);
-  const handleAvailable = (id) => carAvailableMutation.mutate(id);
+  // Separate handlers
+  const handleDeleteCar = (id) => deleteCarMutation.mutate(id);
+  const handleDeleteBooking = (id) => deleteBookingMutation.mutate(id);
 
-  // filter datasets depending on tab
+  // Filter data by tab
   const filteredData = (() => {
-    if (activeTab === "allBookings") return bookings;
     if (activeTab === "activeBookings")
       return bookings?.filter((b) => !b.isAvailable);
     if (activeTab === "allCars") return carData;
+    if (activeTab === "allBookings") return bookings;
     if (activeTab === "availableCars")
       return carData?.filter((c) => c.isAvailable);
     return [];
@@ -68,10 +79,10 @@ function AdminDashboard() {
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 sm:gap-4 mb-8">
         {[
-          { key: "allBookings", label: "All Bookings" },
-          { key: "activeBookings", label: "Active Bookings" },
           { key: "allCars", label: "All Cars" },
           { key: "availableCars", label: "Available Cars" },
+          { key: "allBookings", label: "All Bookings" },
+          { key: "activeBookings", label: "Active Bookings" },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -85,7 +96,6 @@ function AdminDashboard() {
         ))}
       </div>
 
-      {/* Main content */}
       <div className="bg-white shadow-lg rounded-2xl">
         {isLoading ? (
           <p className="p-6 text-lg">Loading...</p>
@@ -93,12 +103,22 @@ function AdminDashboard() {
           <p className="p-6 text-red-500">Failed to fetch data</p>
         ) : (
           <>
+            {/* Add Car button for All Cars */}
+            {activeTab === "allCars" && (
+              <div className="flex justify-end p-4">
+                <CarFormDialog buttonTitle="➕ Add Car" />
+              </div>
+            )}
+
             {/* Table for md+ */}
             <div className="hidden md:block overflow-x-auto">
               <Table>
                 <TableCaption>
-                  {activeTab.includes("Bookings") ? "Recent Bookings" : "Cars"}
+                  {activeTab.includes("Bookings")
+                    ? `Recent Bookings (${filteredData?.length || 0})`
+                    : `Cars (${filteredData?.length || 0})`}
                 </TableCaption>
+
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     {activeTab.includes("Bookings") ? (
@@ -120,10 +140,12 @@ function AdminDashboard() {
                         <TableHead>Location</TableHead>
                         <TableHead>Price</TableHead>
                         <TableHead>Available</TableHead>
+                        <TableHead>Action</TableHead>
                       </>
                     )}
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {activeTab.includes("Bookings")
                     ? filteredData?.map((booking) => (
@@ -139,10 +161,10 @@ function AdminDashboard() {
                           <TableCell>£{booking.totalPrice}</TableCell>
                           <TableCell>
                             <span
-                              className={`md: block px-2 py-1 w-36 rounded-md text-sm font-semibold ${
+                              className={`block text-center px-3 py-1 w-[140px] rounded-md text-sm font-semibold ${
                                 bookingStatus(booking.endDate).includes("Ended")
-                                  ? "2xl:block bg-red-200 text-red-800"
-                                  : "text-center bg-yellow-200 text-yellow-800 py-2 w-36"
+                                  ? "bg-red-200 text-red-800"
+                                  : "bg-yellow-200 text-yellow-800"
                               }`}
                             >
                               {bookingStatus(booking.endDate)}
@@ -152,14 +174,14 @@ function AdminDashboard() {
                             {!booking.isAvailable ? (
                               <button
                                 onClick={() => handleAvailable(booking._id)}
-                                className="px-1 w-28 py-2  rounded-lg bg-blue-400 text-white shadow hover:bg-blue-600"
+                                className="block text-center px-3 py-1 w-[140px] rounded-lg bg-blue-500 text-white hover:bg-blue-600"
                               >
                                 Mark Available
                               </button>
                             ) : (
                               <button
-                                onClick={() => handleDelete(booking._id)}
-                                className="px-1 w-28 py-2  rounded-lg bg-red-400 text-white shadow hover:bg-red-600"
+                                onClick={() => handleDeleteBooking(booking._id)}
+                                className="block text-center px-3 py-1 w-[140px] rounded-lg bg-red-500 text-white hover:bg-red-600"
                               >
                                 Delete
                               </button>
@@ -186,13 +208,22 @@ function AdminDashboard() {
                               </span>
                             )}
                           </TableCell>
+                          <TableCell className="flex gap-2">
+                            <CarFormDialog buttonTitle="Edit" carToEdit={car} />
+                            <button
+                              onClick={() => handleDeleteCar(car._id)}
+                              className="px-3 py-1 w-[100px] rounded-lg bg-red-500 text-white hover:bg-red-600"
+                            >
+                              Delete
+                            </button>
+                          </TableCell>
                         </TableRow>
                       ))}
                 </TableBody>
               </Table>
             </div>
 
-            {/* Card layout for small screens */}
+            {/* Mobile cards */}
             <div className="md:hidden divide-y">
               {activeTab.includes("Bookings")
                 ? filteredData?.map((booking) => (
@@ -217,28 +248,28 @@ function AdminDashboard() {
                       <div className="font-semibold">Status</div>
                       <div>
                         <span
-                          className={`md: block px-2 py-1 rounded-md text-sm font-semibold ${
+                          className={`block text-center px-3 py-1 w-[140px] rounded-md text-sm font-semibold ${
                             bookingStatus(booking.endDate).includes("Ended")
-                              ? "2xl:block bg-red-200 text-red-800"
-                              : "text-center bg-yellow-200 text-yellow-800 py-2 w-36"
+                              ? "bg-red-200 text-red-800"
+                              : "bg-yellow-200 text-yellow-800"
                           }`}
                         >
                           {bookingStatus(booking.endDate)}
                         </span>
                       </div>
 
-                      <div className="col-span-2 pt-2">
+                      <div className="col-span-2 pt-2 flex justify-center">
                         {!booking.isAvailable ? (
                           <button
                             onClick={() => handleAvailable(booking._id)}
-                            className="w-full py-2 rounded-lg bg-blue-500 text-white"
+                            className="block text-center px-3 py-2 w-[140px] rounded-lg bg-blue-500 text-white hover:bg-blue-600"
                           >
                             Mark Available
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleDelete(booking._id)}
-                            className="w-full py-2 rounded-lg bg-red-500 text-white"
+                            onClick={() => handleDeleteBooking(booking._id)}
+                            className="block text-center px-3 py-2 w-[140px] rounded-lg bg-red-500 text-white hover:bg-red-600"
                           >
                             Delete
                           </button>
@@ -251,11 +282,11 @@ function AdminDashboard() {
                       key={car._id}
                       className="p-4 grid grid-cols-2 gap-y-2 gap-x-4"
                     >
+                      <div className="font-semibold">Reg Number</div>
+                      <div>{car.regNumber}</div>
+
                       <div className="font-semibold">Name</div>
                       <div>{car.name}</div>
-
-                      <div className="font-semibold">Reg</div>
-                      <div>{car.regNumber}</div>
 
                       <div className="font-semibold">Type</div>
                       <div>{car.carType}</div>
@@ -278,6 +309,16 @@ function AdminDashboard() {
                         ) : (
                           <span className="text-red-600 font-semibold">No</span>
                         )}
+                      </div>
+
+                      <div className="col-span-2 flex gap-2 pt-2 justify-center">
+                        <CarFormDialog buttonTitle="Edit" carToEdit={car} />
+                        <button
+                          onClick={() => handleDeleteCar(car._id)}
+                          className="block text-center px-3 py-2 w-[140px] rounded-lg bg-red-500 text-white hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ))}

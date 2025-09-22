@@ -8,10 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { allCarsData} from "@/components/api/api";
-import { useQuery} from "react-query";
+import { allCarsData } from "@/components/api/api";
+import { useQuery } from "react-query";
 import CarTable from "./CarTable";
-import DialogForm from "@/components/DialogForm";
+import DialogForm from "@/components/CarFormDialog";
 
 function CarList() {
   //   const { id } = useParams();
@@ -21,7 +21,7 @@ function CarList() {
 
   return (
     <>
-      <div className='w-[900px] mx-auto '>
+      <div className="w-[900px] mx-auto ">
         <DialogForm />
         <div>
           {isLoading ? (
@@ -41,7 +41,7 @@ function CarList() {
                 </TableRow>
               </TableHeader>
 
-              {data?.cars.map(car => (
+              {data?.cars.map((car) => (
                 <TableBody key={car._id}>
                   <TableRow>
                     <CarTable car={car} />

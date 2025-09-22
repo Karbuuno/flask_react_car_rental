@@ -54,6 +54,34 @@ def Search_cars(location):
         return jsonify({"error": str(err)}), 400
 
 
+#  Add Car
+@cars_bp.route("/add_car", methods=["POST"])
+def add_car():
+    try:
+        data = request.form.to_dict()
+        image_url = None
+
+        if "price" in data:
+            data["price"] = float(data["price"])
+        if "seats" in data:
+            data["seats"] = int(data["seats"])
+
+        if "file" in request.files:
+            file = request.files["file"]
+            result = cloudinary.uploader.upload(file, resource_type="image")
+            image_url = result.get("secure_url")
+
+        data["image"] = image_url
+        data["isAvailable"] = True
+
+        car_id = cars_cl.insert_one(data).inserted_id
+        data["_id"] = str(car_id)
+        return jsonify(data), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
 @cars_bp.route("/available/<id>", methods=["PATCH"])
 def available_car(id):
     try:
@@ -87,50 +115,55 @@ def available_car(id):
         return jsonify({"error": "Car not found"}), 404
 
 
-# ✅ Update a car
-@cars_bp.route("/<id>", methods=["PUT"])
-def update_car(id):
+#  Update Car
+@cars_bp.route("/update/<car_id>", methods=["PUT"])
+def update_car(car_id):
     try:
-        # Use request.form for text fields (multipart/form-data)
-        updated_fields = {
-            "name": request.form.get("name"),
-            "regNumber": request.form.get("regNumber"),
-            "seats": request.form.get("seats"),
-            "doors": request.form.get("doors"),
-            "carType": request.form.get("carType"),
-            "gear": request.form.get("gear"),
-            "description": request.form.get("description"),
-            "location": request.form.get("location"),
-            "fuel": request.form.get("fuel"),
-            "model": request.form.get("model"),
-            "price": request.form.get("price"),
-        }
+        if request.form:
+            update_data = request.form.to_dict()
+        else:
+            update_data = request.get_json() or {}
 
-        # ✅ If a file was uploaded
+        # 🧹 Normalize keys (important!)
+        update_data = {k.strip(): v for k, v in update_data.items()}
+
+        # Convert numeric fields
+        if "price" in update_data:
+            update_data["price"] = float(update_data["price"])
+        if "seats" in update_data:
+            update_data["seats"] = int(update_data["seats"])
+        if "doors" in update_data:
+            update_data["doors"] = int(update_data["doors"])
+
+        # Handle image upload
         if "file" in request.files:
             file = request.files["file"]
+            result = cloudinary.uploader.upload(file, resource_type="image")
+            update_data["image"] = result.get("secure_url")
 
-            # Upload directly to Cloudinary (no need for base64)
-            result = cloudinary.uploader.upload(
-                file,
-                resource_type="image",
-                transformation=[{"width": 500, "height": 500, "crop": "limit"}],
-            )
-            updated_fields["image"] = result.get("secure_url")
-
-        # ✅ Update car in MongoDB
-        car = cars_cl.find_one_and_update(
-            {"_id": ObjectId(id)},
-            {"$set": {k: v for k, v in updated_fields.items() if v is not None}},
+        updated_car = cars_cl.find_one_and_update(
+            {"_id": ObjectId(car_id)},
+            {"$set": update_data},
             return_document=ReturnDocument.AFTER,
         )
 
-        if not car:
+        if updated_car:
+            updated_car["_id"] = str(updated_car["_id"])
+            return jsonify(updated_car), 200
+        else:
             return jsonify({"error": "Car not found"}), 404
-
-        car["_id"] = str(car["_id"])
-        return jsonify(car), 200
-
     except Exception as e:
-        print("Error:", e)
-        return jsonify({"error": "Failed to update car"}), 400
+        return jsonify({"error": str(e)}), 400
+
+
+#  Delete Car
+@cars_bp.route("/delete/<car_id>", methods=["DELETE"])
+def delete_car(car_id):
+    try:
+        result = cars_cl.delete_one({"_id": ObjectId(car_id)})
+        if result.deleted_count == 1:
+            return jsonify({"message": "Car deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Car not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

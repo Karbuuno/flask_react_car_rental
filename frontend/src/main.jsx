@@ -18,7 +18,7 @@ import CarScreen from "./pages/screens/CarDetailsScreen.jsx";
 // import Search from "./pages/screens/Search.jsx";
 import Location from "./pages/screens/Location.jsx";
 import SuccessPage from "./pages/screens/SuccessPage.jsx";
-import CarList from "./pages/screens/admin/CarList.jsx";
+// import CarList from "./pages/screens/admin/CarList.jsx";
 import AdminRoute from "./pages/screens/admin/AdminRoute.jsx";
 import UserProfile from "./pages/screens/UserProfile.jsx";
 import PrivateRoute from "./pages/screens/PrivateRoute.jsx";
@@ -42,7 +42,7 @@ const router = createBrowserRouter(
       </Route>
       {/* Admin User */}
       <Route path="" element={<AdminRoute />}>
-        <Route path="/cars/admin/carlist" element={<CarList />} />
+        {/* <Route path="/cars/admin/carlist" element={<CarList />} /> */}
         <Route path="/cars/admin/dashboard" element={<Dashboard />} />
       </Route>
     </Route>
