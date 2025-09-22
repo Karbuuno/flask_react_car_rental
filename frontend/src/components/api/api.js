@@ -134,6 +134,6 @@ export const allBookings = async () => {
 
 //delete booking
 export const deleteBooking = async (id) => {
-  const { data } = await axios.delete(`/api/bookings/delete-booking/${id}`);
+  const { data } = await axios.delete(`/api/bookings/delete_booking/${id}`);
   return data;
 };

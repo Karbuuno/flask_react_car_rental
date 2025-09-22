@@ -36,3 +36,16 @@ def get_single_booking(id):
         return jsonify({"error": "Invalid booking id"}), 400
     except Exception as err:
         return jsonify({"error": str(err)}), 500
+    #  Delete Booking
+
+
+@bookings_bp.route("/delete_booking/<id>", methods=["DELETE"])
+def delete_car(id):
+    try:
+        result = bookings_cl.delete_one({"_id": ObjectId(id)})
+        if result.deleted_count == 1:
+            return jsonify({"message": "Booking deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Booking not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
